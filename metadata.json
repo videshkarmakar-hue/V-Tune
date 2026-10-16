@@ -1,0 +1,6 @@
+{
+  "name": "V-Tune Audio Architecture",
+  "description": "V-Tune Open Audio Engine & Client. High-velocity streaming client engineered by Videsh Karmakar.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
