@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ArrowDown,
   ArrowUp,
@@ -14,9 +14,6 @@ import {
   Instagram,
   Youtube,
   Music2,
-  Play,
-  Pause,
-  Volume2,
   Download,
   ExternalLink,
   X,
@@ -24,10 +21,12 @@ import {
   Activity,
   Code2,
   Sliders,
-  Layers,
   Sparkles
 } from 'lucide-react';
-import videshPortrait from './assets/images/videsh_portrait_1792140068625.jpg';
+
+const LATEST_APK_URL = "https://github.com/videshkarmakar-hue/V-Tune/releases/download/V-Tune/V-Tune-arm64-foss-debug.apk";
+const DEVELOPER_IMAGE_URL = "https://cdn.phototourl.com/member/2026-09-24-d3b8ff6f-f0d4-43e0-9082-9f39cc851774.png";
+const LATEST_VERSION_NAME = "Latest 2.1.0.0 Version";
 
 interface BuildTarget {
   id: string;
@@ -43,23 +42,25 @@ interface BuildTarget {
   isPrimary?: boolean;
   version: string;
   fileName: string;
+  downloadUrl: string;
 }
 
 const BUILD_TARGETS: BuildTarget[] = [
   {
     id: 'standard',
-    badge: 'STABLE RELEASE',
-    badgeSplit: ['STABLE', 'RELEASE'],
+    badge: 'LATEST 2.1.0.0',
+    badgeSplit: ['LATEST', '2.1.0.0'],
     size: '14.8\nMB',
     title: 'Standard Production',
     shaLabel: 'SHA-256',
     shaTruncated: '6f5f...a14e91024bd35a2b3c4d5e6f',
     shaFull: '6f5f8a14e91024bd35a2b3c4d5e6f770183ac2b56e91f0c23945a1b32cd5849a',
-    buttonLabel: 'Download Standard APK',
+    buttonLabel: 'Download Standard APK (Latest 2.1.0.0 Version)',
     buttonIcon: 'download',
     isPrimary: true,
-    version: 'v3.4.0',
-    fileName: 'VTune-v3.4.0-production-release.apk',
+    version: 'Latest 2.1.0.0 Version',
+    fileName: 'V-Tune-arm64-foss-debug.apk',
+    downloadUrl: LATEST_APK_URL,
   },
   {
     id: 'lite',
@@ -70,52 +71,19 @@ const BUILD_TARGETS: BuildTarget[] = [
     shaLabel: 'SHA-256',
     shaTruncated: '9b4f...2cde71829f01ab23cd45ef67',
     shaFull: '9b4f72cde71829f01ab23cd45ef67319082bc74a3f1248092ec094ba1489ec0a',
-    buttonLabel: 'Download Lite APK',
+    buttonLabel: 'Download Lite APK (Latest 2.1.0.0 Version)',
     buttonIcon: 'zap',
     isPrimary: false,
-    version: 'v3.4.0-lite',
-    fileName: 'VTune-v3.4.0-lite-arm64.apk',
-  },
-  {
-    id: 'beta',
-    badge: 'EXPERIMENTAL',
-    badgeSplit: ['EXPERIMENTA', 'L'],
-    size: '15.4\nMB',
-    title: 'Beta Channel',
-    shaLabel: 'SHA-256',
-    shaTruncated: '9f82...e5f60718293a4b5c6d7e8f00',
-    shaFull: '9f8268e5f60718293a4b5c6d7e8f007b81920ac3498fbe092384a569c73ef211',
-    buttonLabel: 'Download Beta Build',
-    buttonIcon: 'beta',
-    isPrimary: false,
-    version: 'v3.5.0-beta.2',
-    fileName: 'VTune-v3.5.0-beta.2-preview.apk',
+    version: 'Latest 2.1.0.0 Version (Lite)',
+    fileName: 'V-Tune-arm64-foss-debug.apk',
+    downloadUrl: LATEST_APK_URL,
   },
 ];
 
 export default function App() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [downloadModalTarget, setDownloadModalTarget] = useState<BuildTarget | null>(null);
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [infoModal, setInfoModal] = useState<string | null>(null);
   const [activeSocialModal, setActiveSocialModal] = useState<string | null>(null);
-
-  // Audio player dock state (simulating real engine playback)
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioProgress, setAudioProgress] = useState(38);
-  const [isAudioDockOpen, setIsAudioDockOpen] = useState(false);
-  const [audioBitrate, setAudioBitrate] = useState<'FLAC / 24-bit 96kHz' | '320 kbps'>('FLAC / 24-bit 96kHz');
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isPlaying) {
-      timer = setInterval(() => {
-        setAudioProgress((prev) => (prev >= 100 ? 0 : prev + 0.5));
-      }, 500);
-    }
-    return () => clearInterval(timer);
-  }, [isPlaying]);
 
   const handleCopy = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
@@ -123,36 +91,6 @@ export default function App() {
     setTimeout(() => {
       setCopiedId(null);
     }, 2200);
-  };
-
-  const startDownload = (target: BuildTarget) => {
-    setDownloadModalTarget(target);
-    setIsDownloading(true);
-    setDownloadProgress(0);
-
-    const step = 15;
-    const interval = setInterval(() => {
-      setDownloadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloading(false);
-          // Trigger actual APK file download simulation
-          const blob = new Blob([
-            `# V-Tune Open Audio Client\nTarget: ${target.title}\nVersion: ${target.version}\nSHA-256: ${target.shaFull}\nEngine Architecture: 64-bit Arm v8a / x86_64\nVerified by: Videsh Karmakar\n`
-          ], { type: 'application/vnd.android.package-archive' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = target.fileName;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          return 100;
-        }
-        return Math.min(prev + step, 100);
-      });
-    }, 200);
   };
 
   const scrollToTop = () => {
@@ -189,8 +127,8 @@ export default function App() {
               <span className="text-white font-display font-bold text-sm tracking-wide leading-none">
                 V-Tune
               </span>
-              <span className="text-[10px] text-[#4edea3] font-mono tracking-widest leading-tight uppercase font-medium mt-0.5">
-                v3.4.0
+              <span className="text-[10px] text-[#4edea3] font-mono tracking-wider leading-tight uppercase font-medium mt-0.5">
+                {LATEST_VERSION_NAME}
               </span>
               <span className="text-[9px] text-[#52796F] font-mono tracking-widest leading-none uppercase">
                 ENGINE
@@ -228,13 +166,16 @@ export default function App() {
 
           {/* Right Action: Download APK pill */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => startDownload(BUILD_TARGETS[0])}
-              className="bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#051613] text-xs font-bold px-4 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 shadow-[0_0_15px_rgba(78,222,163,0.25)] hover:scale-[1.02]"
+            <a
+              href={LATEST_APK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              download="V-Tune-arm64-foss-debug.apk"
+              className="bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#051613] text-xs font-bold px-4 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 shadow-[0_0_15px_rgba(78,222,163,0.25)] hover:scale-[1.02] cursor-pointer"
             >
               <ArrowDown className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Download APK</span>
-            </button>
+            </a>
           </div>
         </div>
       </header>
@@ -243,6 +184,12 @@ export default function App() {
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* HERO SECTION */}
         <section className="pt-20 sm:pt-28 pb-16 sm:pb-24 flex flex-col items-center text-center">
+          {/* Latest Version Tag */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#082b26] border border-[#4edea3]/40 text-[#4edea3] text-xs font-mono mb-6 shadow-[0_0_20px_rgba(78,222,163,0.2)]">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{LATEST_VERSION_NAME}</span>
+          </div>
+
           {/* Main Giant Heading */}
           <h1 className="font-display text-7xl sm:text-8xl md:text-9xl font-extrabold tracking-tight text-[#8ee7c6] drop-shadow-[0_0_40px_rgba(78,222,163,0.18)] select-none">
             V-TUNE
@@ -250,16 +197,19 @@ export default function App() {
 
           {/* Hero Download APK Pill Button */}
           <div className="mt-8 sm:mt-10 mb-8 sm:mb-10">
-            <button
-              onClick={() => startDownload(BUILD_TARGETS[0])}
-              className="bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#002c1b] font-bold px-10 py-3 sm:py-3.5 rounded-full flex items-center justify-center gap-2.5 transition-all duration-200 shadow-[0_0_30px_rgba(78,222,163,0.35)] hover:scale-105 group cursor-pointer"
+            <a
+              href={LATEST_APK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              download="V-Tune-arm64-foss-debug.apk"
+              className="bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#002c1b] font-bold px-10 py-3.5 rounded-full flex items-center justify-center gap-2.5 transition-all duration-200 shadow-[0_0_30px_rgba(78,222,163,0.35)] hover:scale-105 group cursor-pointer"
             >
               <ArrowDown className="w-5 h-5 stroke-[2.5] text-[#002c1b] group-hover:translate-y-0.5 transition-transform" />
               <div className="flex flex-col text-left leading-tight">
-                <span className="text-sm sm:text-base font-extrabold tracking-tight">Download</span>
-                <span className="text-[11px] font-mono tracking-widest uppercase opacity-90">APK</span>
+                <span className="text-sm sm:text-base font-extrabold tracking-tight">Download APK</span>
+                <span className="text-[10px] font-mono tracking-wider uppercase opacity-90">{LATEST_VERSION_NAME}</span>
               </div>
-            </button>
+            </a>
           </div>
 
           {/* Trust & Compatibility Badges */}
@@ -351,58 +301,33 @@ export default function App() {
           </div>
         </section>
 
-        {/* SECTION 2: DEVELOPER / CREATOR SPOTLIGHT */}
+        {/* SECTION 2: DEVELOPER / CREATOR SPOTLIGHT WITH DEVELOPER IMAGE */}
         <section id="developer" className="py-16 sm:py-24">
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-10 sm:gap-14">
-            {/* Left: Interactive Circular Badge */}
+          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 sm:gap-14">
+            {/* Developer Credit Slot Image */}
             <div className="flex flex-col items-center">
-              <div className="relative group cursor-pointer" onClick={() => setActiveSocialModal('videsh')}>
-                {/* Outer Circular Ring with Glowing Border */}
-                <div className="w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2 bg-[#08221c]/90 border border-[#34D399]/30 shadow-[0_0_35px_rgba(52,211,153,0.15)] flex items-center justify-center relative overflow-hidden backdrop-blur-md transition-transform duration-300 group-hover:scale-105">
-                  {/* Subtle inner grid lines */}
-                  <div className="absolute inset-0 bg-[radial-gradient(#1f4a3f_1px,transparent_1px)] [background-size:12px_12px] opacity-20 pointer-events-none" />
-
-                  {/* Inside composite: Portrait + Mini Phone UI */}
-                  <div className="flex items-center justify-center gap-2 z-10 w-full px-2">
-                    {/* Portrait Avatar */}
-                    <div className="relative flex-shrink-0 flex flex-col items-center">
-                      <img
-                        src={videshPortrait}
-                        alt="Videsh Karmakar"
-                        className="w-24 h-24 sm:w-28 sm:h-28 rounded-full object-cover border-2 border-[#4edea3] shadow-md"
-                      />
-                      {/* Sub-badge below photo */}
-                      <div className="mt-1.5 text-center">
-                        <span className="text-[11px] font-bold text-white block leading-tight">Karmakar</span>
-                        <span className="text-[9px] text-[#4edea3] font-mono tracking-wider block">UI & Design</span>
-                      </div>
-                    </div>
-
-                    {/* Mini V-Tune UI phone preview mockup */}
-                    <div className="w-28 sm:w-32 bg-[#051613]/95 border border-[#1b3d34] rounded-xl p-2.5 shadow-xl flex flex-col gap-1.5">
-                      <div className="flex items-center justify-between border-b border-[#112923] pb-1">
-                        <span className="text-[9px] font-mono font-bold text-[#4edea3]">V-Tune</span>
-                        <span className="text-[8px] font-mono text-slate-500">v3.4</span>
-                      </div>
-                      <div className="text-left">
-                        <span className="text-[8px] text-[#94A3B8] block">Welcome Back, Videsh</span>
-                        <span className="text-[9px] font-bold text-white truncate block">Pine Wave Synth</span>
-                      </div>
-                      {/* Mini audio wave bars */}
-                      <div className="flex items-center gap-1 h-3 mt-1">
-                        <div className="w-1 bg-[#4edea3] h-full rounded-full animate-pulse" />
-                        <div className="w-1 bg-[#4edea3] h-2/3 rounded-full animate-pulse [animation-delay:150ms]" />
-                        <div className="w-1 bg-[#4edea3] h-4/5 rounded-full animate-pulse [animation-delay:300ms]" />
-                        <div className="w-1 bg-[#4edea3] h-1/2 rounded-full animate-pulse [animation-delay:450ms]" />
-                        <div className="w-1 bg-[#4edea3] h-full rounded-full animate-pulse [animation-delay:200ms]" />
-                      </div>
-                    </div>
+              <div
+                className="relative group cursor-pointer"
+                onClick={() => setActiveSocialModal('videsh')}
+                title="Click to view developer profile"
+              >
+                {/* Outer Ring with Glow */}
+                <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full p-2 bg-[#08221c]/90 border-2 border-[#34D399]/40 shadow-[0_0_35px_rgba(52,211,153,0.25)] flex items-center justify-center relative overflow-hidden backdrop-blur-md transition-transform duration-300 group-hover:scale-105">
+                  <img
+                    src={DEVELOPER_IMAGE_URL}
+                    alt="Videsh Karmakar - Lead Designer & Core Developer"
+                    className="w-full h-full rounded-full object-cover border border-[#4edea3]/50 shadow-inner"
+                  />
+                  {/* Bottom Credit Overlay */}
+                  <div className="absolute inset-x-0 bottom-0 py-2 bg-gradient-to-t from-[#051613]/90 via-[#051613]/60 to-transparent flex flex-col items-center text-center">
+                    <span className="text-[11px] font-bold text-white leading-tight drop-shadow">Karmakar</span>
+                    <span className="text-[9px] text-[#4edea3] font-mono tracking-wider drop-shadow">UI & Design</span>
                   </div>
                 </div>
               </div>
 
               {/* Status Indicator Under Circle */}
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-3.5 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#4edea3] shadow-[0_0_8px_#4edea3] animate-pulse" />
                 <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-[#4edea3] uppercase">
                   ACTIVE ARCHITECT
@@ -410,7 +335,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* Right: Creator Info */}
+            {/* Creator Info */}
             <div className="flex flex-col text-center md:text-left">
               <span className="text-xs font-mono font-semibold tracking-[0.2em] text-[#4edea3] uppercase mb-2">
                 CREATOR & CORE DEVELOPER
@@ -470,12 +395,17 @@ export default function App() {
 
         {/* SECTION 3: PICK YOUR BUILD TARGET */}
         <section id="builds" className="py-16 sm:py-24">
-          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center tracking-tight mb-12">
-            Pick your build target.
-          </h2>
+          <div className="text-center mb-12">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight mb-3">
+              Pick your build target.
+            </h2>
+            <p className="text-sm font-mono text-[#4edea3]">
+              {LATEST_VERSION_NAME} (Universal ARM64 & FOSS)
+            </p>
+          </div>
 
-          {/* 3 Build Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Build Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {BUILD_TARGETS.map((target) => (
               <div
                 key={target.id}
@@ -496,9 +426,12 @@ export default function App() {
                   </div>
 
                   {/* Card Title */}
-                  <h3 className="font-display text-2xl font-bold text-white mt-4 mb-5">
+                  <h3 className="font-display text-2xl font-bold text-white mt-4 mb-2">
                     {target.title}
                   </h3>
+                  <div className="text-xs text-[#4edea3] font-mono mb-5">
+                    {LATEST_VERSION_NAME}
+                  </div>
 
                   {/* SHA-256 Box */}
                   <div className="bg-[#071915] border border-[#16382f] rounded-xl p-3 mb-6">
@@ -532,29 +465,27 @@ export default function App() {
                 {/* Bottom Action Button */}
                 <div>
                   {target.isPrimary ? (
-                    <button
-                      onClick={() => startDownload(target)}
-                      className="w-full bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#051613] text-xs font-bold py-3 rounded-full flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:scale-[1.02] cursor-pointer"
+                    <a
+                      href={LATEST_APK_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={target.fileName}
+                      className="w-full bg-[#4edea3] hover:bg-[#34d399] active:bg-[#059669] text-[#051613] text-xs font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition-all duration-200 shadow-md hover:scale-[1.02] cursor-pointer"
                     >
                       <ArrowDown className="w-4 h-4 stroke-[2.5]" />
                       <span>{target.buttonLabel}</span>
-                    </button>
-                  ) : target.buttonIcon === 'zap' ? (
-                    <button
-                      onClick={() => startDownload(target)}
-                      className="w-full bg-[#16382f]/90 hover:bg-[#1f4a3e] active:bg-[#0f2e26] border border-[#235347]/80 text-[#9fd1c1] hover:text-white text-xs font-semibold py-3 rounded-full flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
+                    </a>
+                  ) : (
+                    <a
+                      href={LATEST_APK_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={target.fileName}
+                      className="w-full bg-[#16382f]/90 hover:bg-[#1f4a3e] active:bg-[#0f2e26] border border-[#235347]/80 text-[#9fd1c1] hover:text-white text-xs font-semibold py-3.5 rounded-full flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
                     >
                       <Zap className="w-4 h-4 text-[#4edea3] stroke-[2]" />
                       <span>{target.buttonLabel}</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => startDownload(target)}
-                      className="w-full bg-[#16382f]/90 hover:bg-[#1f4a3e] active:bg-[#0f2e26] border border-[#235347]/80 text-[#9fd1c1] hover:text-white text-xs font-semibold py-3 rounded-full flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
-                    >
-                      <span className="text-[#4edea3] text-xs">▲</span>
-                      <span>{target.buttonLabel}</span>
-                    </button>
+                    </a>
                   )}
                 </div>
               </div>
@@ -576,13 +507,16 @@ export default function App() {
 
             {/* Right: Mirror Download & Scroll-to-Top Button */}
             <div className="flex items-center gap-3">
-              <button
-                onClick={() => setInfoModal('mirror')}
+              <a
+                href={LATEST_APK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                download="V-Tune-arm64-foss-debug.apk"
                 className="bg-[#123129] hover:bg-[#1c473c] border border-[#225346]/70 text-[#4edea3] text-xs font-semibold px-5 py-2.5 rounded-full transition-colors flex items-center gap-2 cursor-pointer shadow-sm"
               >
                 <ArrowDown className="w-3.5 h-3.5 stroke-[2.2]" />
-                <span>Download Mirror (v2.4)</span>
-              </button>
+                <span>Download APK ({LATEST_VERSION_NAME})</span>
+              </a>
 
               <button
                 onClick={scrollToTop}
@@ -590,48 +524,6 @@ export default function App() {
                 className="w-10 h-10 rounded-full bg-[#123129] hover:bg-[#1c473c] border border-[#225346]/70 flex items-center justify-center text-[#4edea3] hover:text-white transition-colors cursor-pointer"
               >
                 <ArrowUp className="w-4 h-4 stroke-[2.2]" />
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* AUDIO ENGINE LIVE PREVIEW BANNER (Interactive Feature conforming to Pine & Glass Stream system specs) */}
-        <section className="mb-14">
-          <div className="bg-[#09221b]/60 border border-[#1a3d34]/40 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="w-10 h-10 rounded-full bg-[#4edea3] text-[#051613] flex items-center justify-center hover:bg-[#34d399] transition shadow-[0_0_15px_rgba(78,222,163,0.3)] cursor-pointer"
-                title={isPlaying ? 'Pause Audio Preview' : 'Play Audio Preview'}
-              >
-                {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
-              </button>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-white">Live Stream Pipeline Demo</span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono-data bg-[#174236] text-[#4edea3] border border-[#4edea3]/30">
-                    {audioBitrate}
-                  </span>
-                </div>
-                <span className="text-[11px] text-[#94A3B8]">
-                  {isPlaying ? 'Streaming lossless 24-bit PCM without buffering daemons' : 'Click play to simulate zero-telemetry playback'}
-                </span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-              <button
-                onClick={() => setAudioBitrate(audioBitrate === 'FLAC / 24-bit 96kHz' ? '320 kbps' : 'FLAC / 24-bit 96kHz')}
-                className="text-[11px] font-mono text-[#4edea3] hover:underline"
-              >
-                Switch Codec
-              </button>
-              <button
-                onClick={() => setInfoModal('codecs')}
-                className="text-xs text-[#94A3B8] hover:text-white flex items-center gap-1"
-              >
-                <span>Codec Specs</span>
-                <ExternalLink className="w-3 h-3" />
               </button>
             </div>
           </div>
@@ -650,7 +542,7 @@ export default function App() {
               <span>V-Tune Architecture</span>
             </div>
             <span className="hidden sm:inline text-emerald-900">•</span>
-            <span>© 2025 V-Tune Open Audio Labs. Non-telemetry open streaming framework.</span>
+            <span>© 2025 V-Tune Open Audio Labs. {LATEST_VERSION_NAME}.</span>
           </div>
 
           {/* Right Footer Links */}
@@ -683,90 +575,13 @@ export default function App() {
         </div>
       </footer>
 
-      {/* DOWNLOAD PROGRESS MODAL */}
-      {downloadModalTarget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
-          <div className="bg-[#0b211b] border border-[#235347] rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-            <button
-              onClick={() => {
-                setDownloadModalTarget(null);
-                setIsDownloading(false);
-              }}
-              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white p-1 rounded-full hover:bg-white/5"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#16382f] border border-[#4edea3]/40 flex items-center justify-center text-[#4edea3]">
-                <Download className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-display font-bold text-white text-base">
-                  {downloadProgress < 100 ? 'Packaging Build Artifact' : 'Build Ready for Android'}
-                </h4>
-                <p className="text-xs text-[#94A3B8] font-mono">{downloadModalTarget.fileName}</p>
-              </div>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="my-5">
-              <div className="flex justify-between text-xs font-mono mb-2">
-                <span className="text-[#4edea3]">
-                  {downloadProgress < 100 ? `Compiling: ${downloadProgress}%` : 'SHA-256 Checksum Verified'}
-                </span>
-                <span className="text-[#94A3B8]">{downloadModalTarget.size.replace('\n', ' ')}</span>
-              </div>
-              <div className="w-full bg-[#051613] h-2.5 rounded-full overflow-hidden border border-[#1b3d34]">
-                <div
-                  className="bg-[#4edea3] h-full transition-all duration-200"
-                  style={{ width: `${downloadProgress}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Verification details */}
-            <div className="bg-[#061713] rounded-xl p-3 border border-[#15342c] text-xs font-mono text-[#94A3B8] space-y-1.5 mb-5">
-              <div className="flex justify-between">
-                <span>Target Version:</span>
-                <span className="text-white">{downloadModalTarget.version}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Architecture:</span>
-                <span className="text-[#4edea3]">arm64-v8a / universal</span>
-              </div>
-              <div>
-                <span className="block text-[10px] text-slate-500 mb-0.5">SHA-256 HASH:</span>
-                <span className="text-[10px] text-emerald-300 break-all">{downloadModalTarget.shaFull}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => handleCopy('modal-sha', downloadModalTarget.shaFull)}
-                className="flex-1 bg-[#14362d] hover:bg-[#1e4a3e] border border-[#245448] text-white text-xs font-semibold py-2.5 rounded-full transition flex items-center justify-center gap-1.5"
-              >
-                {copiedId === 'modal-sha' ? <Check className="w-3.5 h-3.5 text-[#4edea3]" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedId === 'modal-sha' ? 'Checksum Copied' : 'Copy Checksum'}</span>
-              </button>
-              <button
-                onClick={() => setDownloadModalTarget(null)}
-                className="flex-1 bg-[#4edea3] hover:bg-[#34d399] text-[#051613] text-xs font-bold py-2.5 rounded-full transition"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* INFORMATION MODALS (API, Benchmarks, Codecs, Mirror) */}
       {infoModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
           <div className="bg-[#0b211b] border border-[#235347] rounded-2xl max-w-lg w-full p-6 shadow-2xl relative max-h-[85vh] overflow-y-auto">
             <button
               onClick={() => setInfoModal(null)}
-              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white p-1 rounded-full hover:bg-white/5"
+              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white p-1 rounded-full hover:bg-white/5 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -775,10 +590,10 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-2 mb-4 text-[#4edea3]">
                   <Activity className="w-5 h-5" />
-                  <h3 className="font-display font-bold text-xl text-white">Performance Benchmarks</h3>
+                  <h3 className="font-display font-bold text-xl text-white">Performance Benchmarks ({LATEST_VERSION_NAME})</h3>
                 </div>
                 <p className="text-xs text-[#94A3B8] mb-4">
-                  Tested on Snapdragon 665 / 4GB RAM running Android 11. Low-spec device optimization benchmarks:
+                  Tested on Snapdragon 665 / 4GB RAM running Android 11. Low-spec device optimization benchmarks for {LATEST_VERSION_NAME}:
                 </p>
                 <div className="space-y-3 font-mono text-xs">
                   <div className="bg-[#061713] p-3 rounded-xl border border-[#1b3d34]">
@@ -851,32 +666,32 @@ export default function App() {
               <div>
                 <div className="flex items-center gap-2 mb-4 text-[#4edea3]">
                   <Server className="w-5 h-5" />
-                  <h3 className="font-display font-bold text-xl text-white">Release Mirror Nodes</h3>
+                  <h3 className="font-display font-bold text-xl text-white">Release Mirror Nodes ({LATEST_VERSION_NAME})</h3>
                 </div>
                 <p className="text-xs text-[#94A3B8] mb-4">
-                  High-speed global content distribution network mirrors for direct APK downloads:
+                  High-speed global mirrors directly fetching {LATEST_VERSION_NAME} (V-Tune-arm64-foss-debug.apk):
                 </p>
                 <div className="space-y-2 text-xs">
                   {[
+                    { region: 'GitHub Primary Release (Global)', speed: '1.2 Gbps', latency: 'Direct CDN' },
                     { region: 'Tokyo, Japan (Asia-East)', speed: '980 Mbps', latency: '12ms' },
                     { region: 'Frankfurt, Germany (EU-Central)', speed: '1 Gbps', latency: '24ms' },
                     { region: 'San Jose, USA (US-West)', speed: '1 Gbps', latency: '35ms' },
-                    { region: 'Singapore (Asia-South)', speed: '850 Mbps', latency: '18ms' },
                   ].map((mirror, idx) => (
                     <div key={idx} className="bg-[#061713] p-3 rounded-xl border border-[#1b3d34] flex items-center justify-between">
                       <div>
                         <span className="text-white font-medium block">{mirror.region}</span>
-                        <span className="text-[10px] text-[#52796F] font-mono">Latency: {mirror.latency}</span>
+                        <span className="text-[10px] text-[#52796F] font-mono">{LATEST_VERSION_NAME} • {mirror.latency}</span>
                       </div>
-                      <button
-                        onClick={() => {
-                          setInfoModal(null);
-                          startDownload(BUILD_TARGETS[0]);
-                        }}
-                        className="bg-[#16382f] hover:bg-[#4edea3] hover:text-[#051613] text-[#4edea3] px-3 py-1 rounded-full font-mono text-[11px] transition"
+                      <a
+                        href={LATEST_APK_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download="V-Tune-arm64-foss-debug.apk"
+                        className="bg-[#16382f] hover:bg-[#4edea3] hover:text-[#051613] text-[#4edea3] px-3 py-1 rounded-full font-mono text-[11px] transition cursor-pointer"
                       >
-                        Download
-                      </button>
+                        Download APK
+                      </a>
                     </div>
                   ))}
                 </div>
@@ -886,7 +701,7 @@ export default function App() {
             <div className="mt-6">
               <button
                 onClick={() => setInfoModal(null)}
-                className="w-full bg-[#16382f] hover:bg-[#204c3f] text-white text-xs font-semibold py-2.5 rounded-full transition"
+                className="w-full bg-[#16382f] hover:bg-[#204c3f] text-white text-xs font-semibold py-2.5 rounded-full transition cursor-pointer"
               >
                 Close
               </button>
@@ -901,35 +716,35 @@ export default function App() {
           <div className="bg-[#0b211b] border border-[#235347] rounded-2xl max-w-sm w-full p-6 shadow-2xl relative text-center">
             <button
               onClick={() => setActiveSocialModal(null)}
-              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white p-1 rounded-full hover:bg-white/5"
+              className="absolute top-4 right-4 text-[#94A3B8] hover:text-white p-1 rounded-full hover:bg-white/5 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
             <img
-              src={videshPortrait}
+              src={DEVELOPER_IMAGE_URL}
               alt="Videsh Karmakar"
               className="w-24 h-24 rounded-full mx-auto mb-3 object-cover border-2 border-[#4edea3] shadow-lg"
             />
             <h4 className="font-display font-bold text-white text-lg">VIDESH KARMAKAR</h4>
             <p className="text-xs text-[#4edea3] font-mono mb-2">Lead Designer & Core Developer</p>
             <p className="text-xs text-[#94A3B8] leading-relaxed mb-5">
-              Creator of V-Tune. Focused on unbloated systems, high-velocity audio pipelines, and accessible open engineering for Android devices worldwide.
+              Creator of V-Tune ({LATEST_VERSION_NAME}). Focused on unbloated systems, high-velocity audio pipelines, and accessible open engineering for Android devices worldwide.
             </p>
 
             <div className="flex flex-col gap-2">
               <a
-                href="https://github.com"
+                href="https://github.com/videshkarmakar-hue/V-Tune"
                 target="_blank"
                 rel="noreferrer"
-                className="bg-[#14362d] hover:bg-[#1e4a3e] border border-[#235347] text-white text-xs font-semibold py-2.5 rounded-full flex items-center justify-center gap-2 transition"
+                className="bg-[#14362d] hover:bg-[#1e4a3e] border border-[#235347] text-white text-xs font-semibold py-2.5 rounded-full flex items-center justify-center gap-2 transition cursor-pointer"
               >
                 <Globe className="w-3.5 h-3.5 text-[#4edea3]" />
-                <span>Visit Developer Portal</span>
+                <span>Visit GitHub Repository</span>
               </a>
               <button
                 onClick={() => setActiveSocialModal(null)}
-                className="text-xs text-slate-400 hover:text-white py-1.5 transition"
+                className="text-xs text-slate-400 hover:text-white py-1.5 transition cursor-pointer"
               >
                 Back to Architecture
               </button>
