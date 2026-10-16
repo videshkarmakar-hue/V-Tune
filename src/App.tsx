@@ -127,12 +127,6 @@ export default function App() {
               <span className="text-white font-display font-bold text-sm tracking-wide leading-none">
                 V-Tune
               </span>
-              <span className="text-[10px] text-[#4edea3] font-mono tracking-wider leading-tight uppercase font-medium mt-0.5">
-                {LATEST_VERSION_NAME}
-              </span>
-              <span className="text-[9px] text-[#52796F] font-mono tracking-widest leading-none uppercase">
-                ENGINE
-              </span>
             </div>
           </div>
 
@@ -232,10 +226,10 @@ export default function App() {
         {/* SECTION 1: ENGINE ARCHITECTURE */}
         <section id="architecture" className="pt-12 sm:pt-20 pb-20">
           <div className="mb-8">
-            <span className="text-xs font-mono font-semibold tracking-[0.2em] text-[#4edea3] uppercase block mb-3">
+            <span className="text-xs font-mono font-semibold tracking-[0.2em] text-[#4edea3] uppercase block mb-2.5">
               ENGINE ARCHITECTURE
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight max-w-2xl">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug max-w-xl">
               Engineered for pure audio velocity.
             </h2>
           </div>
@@ -243,59 +237,47 @@ export default function App() {
           {/* 3 Architecture Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1 */}
-            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
+            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-6 sm:p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
               <div>
-                <div className="w-10 h-10 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-6 text-[#4edea3] group-hover:scale-110 transition-transform">
-                  <Cpu className="w-5 h-5 stroke-[2]" />
+                <div className="w-9 h-9 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-5 text-[#4edea3] group-hover:scale-110 transition-transform">
+                  <Cpu className="w-4 h-4 stroke-[2]" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-3">
+                <h3 className="font-display text-[15px] sm:text-base font-bold text-white mb-2 leading-snug">
                   Optimization for Low-End Devices
                 </h3>
                 <p className="text-sm text-[#94A3B8] leading-relaxed">
                   Runs effortlessly with &lt;45MB RAM footprint, instant cold startup, zero telemetry daemons, and zero background throttling.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#1a3830]/60 flex items-center justify-between text-xs font-mono text-[#52796F]">
-                <span>RAM &lt; 45MB</span>
-                <span className="text-[#4edea3]">Cold Start &lt; 140ms</span>
-              </div>
             </div>
 
             {/* Card 2 */}
-            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
+            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-6 sm:p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
               <div>
-                <div className="w-10 h-10 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-6 text-[#4edea3] group-hover:scale-110 transition-transform">
-                  <GitFork className="w-5 h-5 stroke-[2]" />
+                <div className="w-9 h-9 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-5 text-[#4edea3] group-hover:scale-110 transition-transform">
+                  <GitFork className="w-4 h-4 stroke-[2]" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-3">
+                <h3 className="font-display text-[15px] sm:text-base font-bold text-white mb-2 leading-snug">
                   Dual-Engine Catalog
                 </h3>
                 <p className="text-sm text-[#94A3B8] leading-relaxed">
                   Unified cross-routing engine that bridges Spotify metadata with YouTube Music high-bitrate audio pipelines seamlessly.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-[#1a3830]/60 flex items-center justify-between text-xs font-mono text-[#52796F]">
-                <span>Spotify + YTM</span>
-                <span className="text-[#4edea3]">Zero Token Required</span>
-              </div>
             </div>
 
             {/* Card 3 */}
-            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
+            <div className="bg-[#0c221d]/85 backdrop-blur-md border border-[#1d3d34]/70 rounded-2xl p-6 sm:p-7 hover:border-[#4edea3]/40 transition-all duration-300 flex flex-col justify-between group shadow-[0_12px_32px_-8px_rgba(0,0,0,0.5)]">
               <div>
-                <div className="w-10 h-10 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-6 text-[#4edea3] group-hover:scale-110 transition-transform">
-                  <Disc className="w-5 h-5 stroke-[2]" />
+                <div className="w-9 h-9 rounded-lg bg-[#14352d] border border-[#235347]/60 flex items-center justify-center mb-5 text-[#4edea3] group-hover:scale-110 transition-transform">
+                  <Disc className="w-4 h-4 stroke-[2]" />
                 </div>
-                <h3 className="font-display text-lg font-bold text-white mb-3">
+                <h3 className="font-display text-[15px] sm:text-base font-bold text-white mb-2 leading-snug">
                   Zero Interruption & Offline Mode
                 </h3>
                 <p className="text-sm text-[#94A3B8] leading-relaxed">
                   100% ad-free playback, uninterrupted background listening with screen locked, and high-speed one-tap FLAC/MP3 downloads.
                 </p>
-              </div>
-              <div className="mt-6 pt-4 border-t border-[#1a3830]/60 flex items-center justify-between text-xs font-mono text-[#52796F]">
-                <span>Screen-Off Daemon</span>
-                <span className="text-[#4edea3]">FLAC / 320kbps</span>
               </div>
             </div>
           </div>
@@ -414,14 +396,11 @@ export default function App() {
                 } rounded-2xl p-6 sm:p-7 flex flex-col justify-between hover:border-[#4edea3]/60 transition-all duration-300`}
               >
                 <div>
-                  {/* Top Header Row: Split Badge & Size */}
+                  {/* Top Header Row: Split Badge */}
                   <div className="flex items-start justify-between">
                     <div className="flex flex-col text-[11px] font-mono font-semibold tracking-wider text-[#4edea3] uppercase leading-tight">
                       <span>{target.badgeSplit[0]}</span>
                       <span>{target.badgeSplit[1]}</span>
-                    </div>
-                    <div className="text-right text-xs font-mono text-[#94A3B8] leading-tight whitespace-pre-line">
-                      {target.size}
                     </div>
                   </div>
 
@@ -500,8 +479,8 @@ export default function App() {
             <div className="flex items-center gap-3 text-center sm:text-left">
               <CheckCircle2 className="w-5 h-5 text-[#4edea3] stroke-[2.2] flex-shrink-0" />
               <div className="text-sm">
-                <span className="font-bold text-white block">Crafted by VIDESH</span>
-                <span className="text-[#94A3B8] block">KARMAKAR and engineering for everyone.</span>
+                <span className="font-bold text-white block">V-Tune</span>
+                <span className="text-[#94A3B8] block">is The Greatest Largest Music Streaming App.</span>
               </div>
             </div>
 
